@@ -32,5 +32,7 @@ export const getAuthUser = async (request, requiresAuth = false) => {
     }
 
     return null;
+  } else {
+    throw new AuthenticationError('No Authorization header found');
   }
 };

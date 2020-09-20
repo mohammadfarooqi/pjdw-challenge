@@ -1,0 +1,15 @@
+import React from 'react';
+
+const AuthContext = React.createContext({
+  token: null,
+  user: null,
+  login: (token, user) => {
+    console.log('auth login func', token, user);
+  },
+  logout: () => {}
+});
+
+export const AuthProvider = AuthContext.Provider
+export const AuthConsumer = AuthContext.Consumer
+
+export default AuthContext;
