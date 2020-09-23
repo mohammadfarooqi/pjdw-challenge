@@ -80,48 +80,4 @@ function AuthPage() {
   );
 }
 
-// class AuthPage extends Component {
-//   constructor(props) {
-//     super(props);
-
-//     this.state = {
-//       email: ''
-//     }
-//   }
-
-//   handleChange = (e) => {
-//     if (e.target.name == 'email') {
-//       this.setState({ email: e.target.value });
-//     }
-//   }
-
-//   submitHandler = (e) => {
-//     e.preventDefault();
-//     const email = this.state.email.trim();
-
-//     if (email && email.length > 0) {
-//       console.log('here', email);
-//     }
-//   }
-//   render() {
-//     return (
-//       <Container className="mx-auto my-5">
-//         <Row>
-//           <Col>
-//             <Form onSubmit={this.submitHandler}>
-//               <FormGroup row>
-//                 <Label for="email" sm={2}>Email</Label>
-//                 <Col sm={10}>
-//                   <Input type="email" name="email" id="email" placeholder="john@smith.com" value={this.state.email} onChange={this.handleChange}/>
-//                 </Col>
-//               </FormGroup>
-//               <Button>Login</Button>
-//             </Form>
-//           </Col>
-//         </Row>
-//       </Container>
-//     );
-//   }
-// }
-
 export default AuthPage;

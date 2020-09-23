@@ -14,6 +14,8 @@ function App() {
   const login = (_token, _user) => {
     setToken(_token);
     setUser(_user);
+    localStorage.setItem('token', _token);
+    localStorage.setItem('user', JSON.stringify(_user));
   }
 
   const logout = () => {

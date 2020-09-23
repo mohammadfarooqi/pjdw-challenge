@@ -1,14 +1,14 @@
 import React, { Component, useContext, useState } from 'react';
 import AuthContext from '../context/auth-context';
 import { gql, useQuery } from '@apollo/client';
-import { setContext } from '@apollo/client/link/context';
+import { Col, Container, Row } from 'reactstrap';
 
 // display a list of users with pagination
 // display a list of products the user owns
 
 const GET_ALL_USERS = gql`
   query GetAllUsers {
-    users {
+    users(first) {
       id
       firstName
       lastName
@@ -17,35 +17,27 @@ const GET_ALL_USERS = gql`
   }
 `;
 
-function DashboardPage () {
+function DashboardPage() {
   const auth = useContext(AuthContext);
-  const token = auth.token;
-  console.log('t', token);
 
-  
-  
-  // const authLink = setContext((_, { headers }) => {
-  //   // get the authentication token from local storage if it exists
-  //   // const token = localStorage.getItem('token');
-  //   // return the headers to the context so httpLink can read them
-  //   return {
-  //     headers: {
-  //       ...headers,
-  //       authorization: token ? `Bearer ${token}` : "",
-  //     }
-  //   }
-  // });
-  
-  const { loading, error, data, client } = useQuery(GET_ALL_USERS, {
-    headers: { 
-      authorization: token ? `Bearer ${token}` : "",
-    }
-  });
-  
+  const { loading, error, data } = useQuery(GET_ALL_USERS);
+
   if (loading) return <p>Loading ...</p>;
   if (error) return <p>Error {JSON.stringify(error)}</p>;
 
-  return <p>{data.users.map(user => <p>{user.firstName}</p>)}!</p>;
+  // return <p>{data.users.map(user => <p>{user.firstName}</p>)}!</p>;
+  return (
+    <Container className="mx-auto my-5">
+      {data && data.users && data.users.map(user => (
+        <Row key={user.id}>
+          <Col>
+            <p>{user.firstName} {user.lastName}</p>
+          </Col>
+        </Row>
+      ))
+      }
+    </Container>
+  );
 }
 
 export default DashboardPage;

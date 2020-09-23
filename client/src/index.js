@@ -6,10 +6,16 @@ import * as serviceWorker from './serviceWorker';
 import { ApolloClient, InMemoryCache, ApolloProvider, HttpLink } from '@apollo/client';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+const httpLink = new HttpLink({ 
+  uri: 'http://localhost:4000/graphql',
+  headers: {
+    'Authorization': localStorage.getItem('token') ? `Bearer ${localStorage.getItem('token')}` : ''
+  }
+});
+
 const client = new ApolloClient({
-  // uri: 'https://48p1r2roz4.sse.codesandbox.io',
   cache: new InMemoryCache(),
-  link: new HttpLink({ uri: 'http://localhost:4000/graphql' })
+  link: httpLink
 });
 
 ReactDOM.render(
