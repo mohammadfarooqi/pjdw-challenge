@@ -1,13 +1,29 @@
 import knex from '../../db/knex';
 import Joi from '@hapi/joi';
 import { issueToken, getAuthUser } from '../../functions/auth';
-import { loginValidate, addProductToUserValidate } from '../validators';
+import { loginValidate, addProductToUserValidate, getUsersValidate, getAllProductsForUser } from '../validators';
 
 export default {
   Query: {
     users: async (root, args, { req }, info) => {
       await getAuthUser(req);
-      const query = await knex('user').select('*');
+
+      await Joi.assert(args, getUsersValidate, { abortEarly: true });
+
+      // first, skip
+      const first = args['first'] || null;
+      const skip = args['skip'] || null;
+
+      let query;
+
+      // console.log('first', first, 'skip', skip);
+
+      if (first != null) {
+        query = await knex('user').orderBy('firstName', 'lastName').limit(first).offset(skip).select('*');
+      } else {
+        query = await knex('user').orderBy('firstName', 'lastName').select('*');
+      }
+
 
       // console.log('q', query);
       return query;
@@ -28,7 +44,50 @@ export default {
         user,
         ...token
       }
-    }
+    },
+    getAllProductsForUser: async (root, args, { req }, info) => {
+      // getAllProductsForUser(id: ID): [Product!]!
+
+      const user = await getAuthUser(req, true);
+
+      await Joi.assert(args, getAllProductsForUser, { abortEarly: true });
+      
+      // const query = await knex({
+      //   a: 'users_products',
+      //   b: 'user',
+      //   c: 'product'
+      // })
+      //   .join('user', 'a.user_id', '=', 'b.id')
+      //   .join('product', 'a.product_id', '=', 'c.id')
+      //   .where({ user_id: user.id }).returning('*');
+
+
+      const query = await knex.select(
+          // 'u.id as user_id', 
+          // 'u.firstName as user_firstName', 
+          // 'u.lastName as user_lastName', 
+          // 'u.email as user_email', 
+          // 'p.id as product_id', 
+          // 'p.name as product_name', 
+          // 'p.description as product_description', 
+          // 'p.price as product_price', 
+          // 'p.image as product_image'
+          'p.*'
+        )
+        .from({ up: 'users_products' })
+        .innerJoin({ u: 'user' }, 'up.user_id', '=', 'u.id')
+        .innerJoin({ p: 'product' }, 'up.product_id', '=', 'p.id')
+        .where({ user_id: args && args['id'] ? args['id'] : user.id }).returning('*');
+
+      // console.log('q2', query);
+
+      return query.map(i => {
+        if (i.image) {
+          i.image = i.image.toString('utf8');
+        }
+        return i;
+      });
+    },
   },
   Mutation: {
     addProductToUser: async (root, args, { req }, info) => {
@@ -96,47 +155,6 @@ export default {
         success,
         message
       };
-    },
-    getAllProductsForUser: async (root, args, { req }, info) => {
-      // getAllProductsForUser: [Product!]!
-
-      const user = await getAuthUser(req, true);
-      
-      // const query = await knex({
-      //   a: 'users_products',
-      //   b: 'user',
-      //   c: 'product'
-      // })
-      //   .join('user', 'a.user_id', '=', 'b.id')
-      //   .join('product', 'a.product_id', '=', 'c.id')
-      //   .where({ user_id: user.id }).returning('*');
-
-
-      const query = await knex.select(
-          // 'u.id as user_id', 
-          // 'u.firstName as user_firstName', 
-          // 'u.lastName as user_lastName', 
-          // 'u.email as user_email', 
-          // 'p.id as product_id', 
-          // 'p.name as product_name', 
-          // 'p.description as product_description', 
-          // 'p.price as product_price', 
-          // 'p.image as product_image'
-          'p.*'
-        )
-        .from({ up: 'users_products' })
-        .innerJoin({ u: 'user' }, 'up.user_id', '=', 'u.id')
-        .innerJoin({ p: 'product' }, 'up.product_id', '=', 'p.id')
-        .where({ user_id: user.id }).returning('*');
-
-      // console.log('q2', query);
-
-      return query.map(i => {
-        if (i.image) {
-          i.image = i.image.toString('utf8');
-        }
-        return i;
-      });
     },
   }
 };

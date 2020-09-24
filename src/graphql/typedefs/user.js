@@ -2,14 +2,14 @@ import { gql } from 'apollo-server-express';
 
 export default gql`
   extend type Query {
-    users: [User!]!
+    users(first: Int, skip: Int): [User!]!
     login(email: String!): Auth!
+    getAllProductsForUser(id: ID): [Product!]!
   }
 
   extend type Mutation {
     addProductToUser(id: ID!): InsertResponse!
     removeProductFromUser(id: ID!): DeleteResponse
-    getAllProductsForUser: [Product!]!
   }
 
   type DeleteResponse {
