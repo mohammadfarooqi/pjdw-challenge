@@ -30,15 +30,23 @@ function AuthPage() {
   });
 
 
-  if (called && loading) return <p>Logging In...</p>;
+  if (called && loading) return (
+    <Container className="mx-auto my-5">
+      <Row>
+        <Col>
+          <p>Logging in...</p>
+        </Col>
+      </Row>
+    </Container>
+  );
   // if (error) return <p>Error</p>
   if (error) client.clearStore();
   if (data && data.login) {
     // console.log(data.login);
     auth.login(data.login.token, data.login.user);
-    return (
-      <h1>all good</h1>
-    );
+    // return (
+    //   <h1>all good</h1>
+    // );
   }
 
   const handleChange = (e) => {
@@ -51,7 +59,7 @@ function AuthPage() {
     e.preventDefault();
 
     if (email && email.length > 0) {
-      console.log('here', email, data?.user);
+      // console.log('here', email, data?.user);
       loginQuery();
     }
   }

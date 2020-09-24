@@ -9,8 +9,10 @@ import AuthContext from './context/auth-context';
 function App() {
   const [token, setToken] = useState(null);
   const [user, setUser] = useState(null);
-  console.log('App token', token);
-  console.log('App user', user);
+
+  // console.log('App token', token);
+  // console.log('App user', user);
+
   const login = (_token, _user) => {
     setToken(_token);
     setUser(_user);
@@ -22,6 +24,7 @@ function App() {
     setToken(null);
     setUser(null);
   }
+  
   return (
     <BrowserRouter>
       <AuthContext.Provider value={{ token, user, login, logout }}>
